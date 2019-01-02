@@ -1,0 +1,22 @@
+<h2>All Vehicles</h2>
+
+<table class="table table-striped" *ngIf="sortedVehicles && sortedVehicles.length > 0">
+  <thead>
+      <tr>
+          <th>Vehicle Name</th>
+          <th>Manufacturer</th>
+          <th>Cost in Credits</th>
+          <th>Cargo Capacity</th>
+          <th>Max Speed</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let vehicle of sortedVehicles">
+          <td>{{vehicle.name}}</td>
+          <td>{{vehicle.manufacturer}}</td>
+          <td>{{vehicle.cost_in_credits}}</td>
+          <td>{{vehicle.cargo_capacity}}</td>
+          <td>{{vehicle.max_atmosphering_speed}}</td>
+      </tr>
+  </tbody>
+</table>

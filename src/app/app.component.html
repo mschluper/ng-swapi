@@ -1,0 +1,22 @@
+<div class="page">
+  <mat-sidenav-container class="page-container">
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" class="vflex-container" style="align-items: stretch">
+        <div><button mat-button class="nav-button" routerLink="/planets">Planets</button></div>
+        <div><button mat-button class="nav-button" routerLink="/vehicles">Vehicles</button></div>
+        <div><button mat-button class="nav-button" routerLink="/people">People</button></div>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="hflex-container">
+      <div class="no-padding" (click)="sidenav.toggle()">
+          <mat-button-toggle *ngIf="opened" ><mat-icon style="margin: 0px -12px">chevron_left </mat-icon></mat-button-toggle>
+          <mat-button-toggle *ngIf="!opened"><mat-icon style="margin: 0px -12px">chevron_right</mat-icon></mat-button-toggle>
+      </div>
+      
+      <div class="page-padded">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  
+</div>
+

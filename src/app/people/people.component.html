@@ -1,0 +1,22 @@
+<h2>All People</h2>
+
+<table class="table table-striped" *ngIf="sortedPeople && sortedPeople.length > 0">
+  <thead>
+      <tr>
+          <th>Person Name</th>
+          <th>Weight</th>
+          <th>Gender</th>
+          <th>Home World</th>
+          <th>Number of Films</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let person of sortedPeople">
+          <td>{{person.name}}</td>
+          <td>{{person.mass}}</td>
+          <td>{{person.gender}}</td>
+          <td><a routerLink="{{person.homeUrl}}">{{person.homeName}}</a></td>
+          <td>{{person.films.length}}</td>
+      </tr>
+  </tbody>
+</table>

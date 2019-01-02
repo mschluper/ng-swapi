@@ -1,0 +1,22 @@
+<h2>All Planets</h2>
+
+<table class="table table-striped" *ngIf="sortedPlanets && sortedPlanets.length > 0">
+  <thead>
+      <tr>
+          <th>Planet Name</th>
+          <th>Population</th>
+          <th>Diameter</th>
+          <th>Terrain</th>
+          <th>Length Of Year</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let planet of sortedPlanets" (click)="onSelect(planet)">
+          <td>{{planet.name}}</td>
+          <td>{{planet.population}}</td>
+          <td>{{planet.diameter}}</td>
+          <td>{{planet.terrain}}</td>
+          <td>{{planet.orbital_period}}</td>
+      </tr>
+  </tbody>
+</table>
