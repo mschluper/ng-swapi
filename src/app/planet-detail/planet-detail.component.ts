@@ -12,9 +12,7 @@ export class PlanetDetailComponent implements OnInit {
   planet: Planet;
 
   constructor(private route: ActivatedRoute,
-    private swapiService: SwapiService
-    //, private location: Location
-    ) { }
+              private swapiService: SwapiService) {}
 
   ngOnInit(): void {
     this.getPlanet();

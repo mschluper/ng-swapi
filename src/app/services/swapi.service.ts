@@ -58,7 +58,7 @@ export class SwapiService {
   //   return planets;
   // }
 
-  getThings<T>(urlExtension: string, page: number) {
+  getThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>{
     let url = `${this.swapiUrl}/${urlExtension}`;
     if (page > 1) {
       url = `${url}/?page=${page}`;
