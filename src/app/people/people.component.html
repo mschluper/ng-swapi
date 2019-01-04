@@ -1,4 +1,16 @@
-<h2>All People ({{sortedPeople.length}})</h2>
+<div class="hflex-container">
+<div>
+    <h2>All People ({{sortedPeople.length}})</h2>
+</div>
+<div style="margin-left:30px">
+    <mat-progress-spinner *ngIf="isLoading" 
+        diameter="40"
+        color="primary" 
+        mode="indeterminate">
+    </mat-progress-spinner>
+</div>
+</div>
+
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" [trackBy]="url">
 

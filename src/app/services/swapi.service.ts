@@ -100,6 +100,7 @@ export class SwapiService {
             things.next(p);
           })
         }
+        things.next();
       });
     });
     return things;

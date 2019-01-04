@@ -11,6 +11,7 @@ import { MatTable } from '@angular/material';
   styleUrls: ['./people.component.scss']
 })
 export class PeopleComponent implements OnInit {
+  isLoading: boolean;
   sortedPeople: Person[] = [];
   dataSource = this.sortedPeople;
   displayedColumns: string[] = ['name', 'mass', 'gender', 'home', 'films'];
@@ -20,7 +21,7 @@ export class PeopleComponent implements OnInit {
 
   ngOnInit() {
     this.getAllPeople();
-    //this.dataSource.sort = this.sort;
+    this.isLoading = true;
   }
 
   getAllPeople() {
@@ -28,6 +29,10 @@ export class PeopleComponent implements OnInit {
 
     this.swapiService.getAllThings<Person>('people')
     .subscribe(p => {
+      if (!p) {
+        this.isLoading = false;
+        return;
+      }
       let person = <Person>p;
       let id = this.getPlanetId(person.homeworld);
       person.homeUrl = `/planets/${id}`;
@@ -35,11 +40,18 @@ export class PeopleComponent implements OnInit {
       this.sortedPeople.sort(personSort);
       this.table.renderRows();
 
-      // Since this ia all an experiment, why not retrieve the planets' names?
+      // Since this is all an experiment, why not retrieve the planets' names?
       this.swapiService.getPlanet(id)
       .subscribe(p => {
         person.homeName = (<Planet>p).name;
       });
+    },
+    error => {
+      console.log(error);
+    },
+    () => {
+      console.log('COMPLETE');
+      this.isLoading = false;
     });
   }
 
