@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SwapiService } from '../services/swapi.service';
 import { Person } from '../DTOs/person';
 import { Planet } from '../DTOs/planet';
+import { MatTable } from '@angular/material';
+
 
 @Component({
   selector: 'app-people',
@@ -9,18 +11,21 @@ import { Planet } from '../DTOs/planet';
   styleUrls: ['./people.component.scss']
 })
 export class PeopleComponent implements OnInit {
-  sortedPeople: Person[];
+  sortedPeople: Person[] = [];
+  dataSource = this.sortedPeople;
+  displayedColumns: string[] = ['name', 'mass', 'gender', 'home', 'films'];
+  @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(private swapiService: SwapiService) { }
 
   ngOnInit() {
     this.getAllPeople();
+    //this.dataSource.sort = this.sort;
   }
 
   getAllPeople() {
     let personSort = (x: Person, y: Person) => x.name < y.name ? -1 : 1;
 
-    this.sortedPeople = [];
     this.swapiService.getAllThings<Person>('people')
     .subscribe(p => {
       let person = <Person>p;
@@ -28,6 +33,7 @@ export class PeopleComponent implements OnInit {
       person.homeUrl = `/planets/${id}`;
       this.sortedPeople.push(person);
       this.sortedPeople.sort(personSort);
+      this.table.renderRows();
 
       // Since this ia all an experiment, why not retrieve the planets' names?
       this.swapiService.getPlanet(id)
