@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlanetDetailComponent } from './planet-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SwapiService } from '../services/swapi.service';
+import { MockSwapiService } from '../mockServices/swapi.service.mock';
 import { ActivatedRoute } from '@angular/router';
 
 describe('PlanetDetailComponent', () => {
@@ -19,7 +20,10 @@ describe('PlanetDetailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [SwapiService, {
+      providers: [{
+        provide: SwapiService,
+        useClass: MockSwapiService
+      }, {
         provide: ActivatedRoute, 
         useValue: fakeActivatedRoute
       }],

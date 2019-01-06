@@ -1,15 +1,164 @@
+// cf. https://angular.io/guide/http#testing-http-requests
+
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
+// Other imports
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { SwapiService } from './swapi.service';
 
-describe('SwapiService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientModule],
-    providers: [SwapiService]
-  }));
+import { Planet } from '../DTOs/planet';
+import { PagedResponse } from '../DTOs/planetsResponse';
+//import { HttpErrorHandler } from '../http-error-handler.service';
+//import { MessageService } from '../message.service';
 
-  it('should be created', () => {
-    const service: SwapiService = TestBed.get(SwapiService);
-    expect(service).toBeTruthy();
+describe('SwapiService', () => {
+  let httpClient: HttpClient;
+  let httpTestingController: HttpTestingController;
+  let swapiService: SwapiService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      // Import the HttpClient mocking services
+      imports: [ HttpClientTestingModule ],
+      // Provide the service-under-test and its dependencies
+      providers: [
+        SwapiService,
+        //HttpErrorHandler,
+        //MessageService
+      ]
+    });
+
+    // Inject the http, test controller, and service-under-test
+    // as they will be referenced by each test.
+    httpClient = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+    
   });
-});
+
+  afterEach(() => {
+    // After every test, assert that there are no more pending requests.
+    httpTestingController.verify();
+  });
+
+  xdescribe('getAllThings', () => {
+    let expectedPlanet: Planet;
+    let expectedPlanets: Planet[];
+    let planetsUrl: string;
+
+    beforeEach(() => {
+      swapiService = TestBed.get(SwapiService);
+      planetsUrl = `${swapiService.swapiUrl}/planets`;
+      expectedPlanet = <Planet>{ name: 'Mars' };
+      expectedPlanets = [
+         { name: 'Mars' },
+         { name: 'Venus' },
+      ] as Planet[];
+    });
+
+    it('should return expected planet (called once)', () => {
+
+      let subject = swapiService.getAllThings<Planet>('planets');
+      subject.subscribe(
+        planet => {
+          expect(planet).toEqual(expectedPlanet, 'should return expected planet');
+        },
+        fail
+      );
+
+      //subject.next(expectedPlanet);
+
+      // SwapiService should have made one request to GET planets from expected URL
+      const req = httpTestingController.expectOne(planetsUrl);
+      expect(req.request.method).toEqual('GET');
+      expect(req.request.url).toEqual(planetsUrl);
+
+      req.flush(expectedPlanet); // Respond 
+    });
+
+    
+    // it('should be OK returning no heroes', () => {
+
+    //   swapiService.getAllThings<Planet>('planets').subscribe(
+    //     planets => expect(planets).toEqual(0, 'should have empty array'),
+    //     fail
+    //   );
+
+    //   const req = httpTestingController.expectOne(planetsUrl);
+    //   req.flush([]); // Respond with no heroes
+    // });
+  });
+
+  describe('getFirstPageOfThings', () => {
+    //let expectedPlanet: Planet;
+    let expectedPlanets: Planet[];
+    let planetsUrl: string;
+    let expectedResponse: PagedResponse<Planet>;
+
+    beforeEach(() => {
+      swapiService = TestBed.get(SwapiService);
+      planetsUrl = `${swapiService.swapiUrl}/planets`;
+      //expectedPlanet = <Planet>{ name: 'Mars' };
+      expectedPlanets = [
+         { name: 'Mars' },
+         { name: 'Venus' },
+      ] as Planet[];
+      expectedResponse = <PagedResponse<Planet>>{
+        count: 2,
+        next: null,
+        previous: null,
+        results: expectedPlanets
+      }
+    });
+
+    it('should return expected planets', () => {
+
+      swapiService.getFirstPageOfThings<Planet>('planets', 1)
+      .subscribe(
+        planet => {
+          expect(planet.results).toEqual(expectedPlanets, 'should return expected planets');
+        },
+        fail
+      );
+
+      // SwapiService should have made one request to GET planets from expected URL
+      const req = httpTestingController.expectOne(planetsUrl);
+      expect(req.request.method).toEqual('GET');
+      expect(req.request.url).toEqual(planetsUrl);
+
+      req.flush(expectedResponse); // Trigger response 
+    });
+  });
+
+  describe('getPlanet', () => {
+    let expectedPlanet: Planet;
+    let planetId: number = 999;
+    let planetUrl: string;
+
+    beforeEach(() => {
+      swapiService = TestBed.get(SwapiService);
+      planetUrl = `${swapiService.swapiUrl}/planets/${planetId}`;
+      expectedPlanet = <Planet>{ name: 'Mars' };
+    });
+  
+    it('should call /planets/id', () => {
+
+      swapiService.getPlanet(planetId).subscribe(
+        planet => {
+          console.log('>>>', planet, planetId, '<<<');
+          expect(planet).toEqual(expectedPlanet, 'should return expected planet');
+        },
+        fail
+      );
+
+      // SwapiService should have made one request to GET planets from expected URL
+      const req = httpTestingController.expectOne(planetUrl);
+      expect(req.request.method).toEqual('GET');
+      expect(req.request.url).toEqual(planetUrl);
+
+      // Respond with the mock planet
+      req.flush(expectedPlanet);
+    });
+
+  });
+})

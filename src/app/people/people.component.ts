@@ -29,10 +29,6 @@ export class PeopleComponent implements OnInit {
 
     this.swapiService.getAllThings<Person>('people')
     .subscribe(p => {
-      if (!p) {
-        this.isLoading = false;
-        return;
-      }
       let person = <Person>p;
       let id = this.getPlanetId(person.homeworld);
       person.homeUrl = `/planets/${id}`;
@@ -50,7 +46,7 @@ export class PeopleComponent implements OnInit {
       console.log(error);
     },
     () => {
-      console.log('COMPLETE');
+      // End of event stream - hide spinner
       this.isLoading = false;
     });
   }

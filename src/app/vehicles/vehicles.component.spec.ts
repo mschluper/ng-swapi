@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VehiclesComponent } from './vehicles.component';
 import { SwapiService } from '../services/swapi.service';
+import { MockSwapiService } from '../mockServices/swapi.service.mock';
 import { HttpClientModule } from '@angular/common/http';
 
 describe('VehiclesComponent', () => {
@@ -11,7 +12,10 @@ describe('VehiclesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [SwapiService],
+      providers: [{
+        provide: SwapiService,
+        useClass: MockSwapiService
+      }],
       declarations: [ VehiclesComponent ]
     })
     .compileComponents();

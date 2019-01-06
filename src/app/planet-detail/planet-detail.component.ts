@@ -20,6 +20,7 @@ export class PlanetDetailComponent implements OnInit {
  
   getPlanet(): void {
     const id = +this.route.snapshot.paramMap.get('id');
+    if (!id) return;
     this.swapiService.getPlanet(id)
       .subscribe(planet => this.planet = planet);
   }
