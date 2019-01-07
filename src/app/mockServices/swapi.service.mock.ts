@@ -68,6 +68,11 @@ export class MockSwapiService implements ISwapiService {
     return subject.asObservable();
   }
 
+  getAllThingsInChunks<T>(urlExtension: string) : Observable<T[]> {
+    let response = this.getResponse(urlExtension).results;
+    return of(response);
+  }
+
   getPlanet(id: number): Observable<Planet> {
     let planet : Planet = <Planet>{
       name: 'Neptune'

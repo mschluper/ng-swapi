@@ -9,8 +9,8 @@ import { SwapiService } from './swapi.service';
 
 import { Planet } from '../DTOs/planet';
 import { PagedResponse } from '../DTOs/planetsResponse';
-//import { HttpErrorHandler } from '../http-error-handler.service';
-//import { MessageService } from '../message.service';
+import { HttpErrorHandler } from './http-error-handler.service';
+import { MessageService } from './message.service';
 
 describe('SwapiService', () => {
   let httpClient: HttpClient;
@@ -24,8 +24,8 @@ describe('SwapiService', () => {
       // Provide the service-under-test and its dependencies
       providers: [
         SwapiService,
-        //HttpErrorHandler,
-        //MessageService
+        HttpErrorHandler,
+        MessageService
       ]
     });
 
@@ -56,11 +56,11 @@ describe('SwapiService', () => {
       ] as Planet[];
     });
 
-    xit('should return expected planet (called once)', () => {
-      let observable = swapiService.getAllThings<Planet>('planets')
+    it('should return expected planet (called once)', () => {
+      swapiService.getAllThingsInChunks<Planet>('planets')
       .subscribe(
         planet => {
-          expect(planet).toEqual(expectedPlanet, 'should return expected planet');
+          expect(planet).toEqual(expectedPlanets, 'should return expected planets');
         },
         fail
       );
@@ -70,7 +70,7 @@ describe('SwapiService', () => {
       expect(req.request.method).toEqual('GET');
       expect(req.request.url).toEqual(planetsUrl);
 
-      req.flush(expectedPlanet); // Respond / cause Observable to resolve
+      req.flush(expectedPlanets); // Respond / cause Observable to resolve
     });
   });
 
