@@ -41,7 +41,7 @@ describe('SwapiService', () => {
     httpTestingController.verify();
   });
 
-  xdescribe('getAllThings', () => {
+  describe('getAllThings', () => {
     let expectedPlanet: Planet;
     let expectedPlanets: Planet[];
     let planetsUrl: string;
@@ -56,41 +56,25 @@ describe('SwapiService', () => {
       ] as Planet[];
     });
 
-    it('should return expected planet (called once)', () => {
-
-      let subject = swapiService.getAllThings<Planet>('planets');
-      subject.subscribe(
+    xit('should return expected planet (called once)', () => {
+      swapiService.getAllThings<Planet>('planets')
+      .subscribe(
         planet => {
           expect(planet).toEqual(expectedPlanet, 'should return expected planet');
         },
         fail
       );
 
-      //subject.next(expectedPlanet);
-
       // SwapiService should have made one request to GET planets from expected URL
       const req = httpTestingController.expectOne(planetsUrl);
       expect(req.request.method).toEqual('GET');
       expect(req.request.url).toEqual(planetsUrl);
 
-      req.flush(expectedPlanet); // Respond 
+      req.flush(expectedPlanet); // Respond / cause Observable to resolve
     });
-
-    
-    // it('should be OK returning no heroes', () => {
-
-    //   swapiService.getAllThings<Planet>('planets').subscribe(
-    //     planets => expect(planets).toEqual(0, 'should have empty array'),
-    //     fail
-    //   );
-
-    //   const req = httpTestingController.expectOne(planetsUrl);
-    //   req.flush([]); // Respond with no heroes
-    // });
   });
 
   describe('getFirstPageOfThings', () => {
-    //let expectedPlanet: Planet;
     let expectedPlanets: Planet[];
     let planetsUrl: string;
     let expectedResponse: PagedResponse<Planet>;
@@ -98,7 +82,6 @@ describe('SwapiService', () => {
     beforeEach(() => {
       swapiService = TestBed.get(SwapiService);
       planetsUrl = `${swapiService.swapiUrl}/planets`;
-      //expectedPlanet = <Planet>{ name: 'Mars' };
       expectedPlanets = [
          { name: 'Mars' },
          { name: 'Venus' },
@@ -112,7 +95,6 @@ describe('SwapiService', () => {
     });
 
     it('should return expected planets', () => {
-
       swapiService.getFirstPageOfThings<Planet>('planets', 1)
       .subscribe(
         planet => {
@@ -126,7 +108,7 @@ describe('SwapiService', () => {
       expect(req.request.method).toEqual('GET');
       expect(req.request.url).toEqual(planetsUrl);
 
-      req.flush(expectedResponse); // Trigger response 
+      req.flush(expectedResponse); // Trigger response / resolve Observable (and first expect() to execute)
     });
   });
 
@@ -142,10 +124,9 @@ describe('SwapiService', () => {
     });
   
     it('should call /planets/id', () => {
-
       swapiService.getPlanet(planetId).subscribe(
         planet => {
-          console.log('>>>', planet, planetId, '<<<');
+          //console.log('>>>', planet, planetId, '<<<');
           expect(planet).toEqual(expectedPlanet, 'should return expected planet');
         },
         fail
@@ -156,7 +137,7 @@ describe('SwapiService', () => {
       expect(req.request.method).toEqual('GET');
       expect(req.request.url).toEqual(planetUrl);
 
-      // Respond with the mock planet
+      // Respond with the mock planet / resolve Observable
       req.flush(expectedPlanet);
     });
 

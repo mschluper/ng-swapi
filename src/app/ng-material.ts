@@ -14,7 +14,7 @@ const modules = [
   MatTableModule
 ]
 @NgModule({
-  imports: [...modules],
-  exports: [...modules],
+  imports: modules,
+  exports: modules,
 })
 export class NgMaterialModule { }

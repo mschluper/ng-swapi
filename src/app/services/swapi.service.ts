@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PlanetsResponse, PagedResponse } from '../DTOs/planetsResponse';
-import { forkJoin, Observable, of, from, Subject } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Planet } from '../DTOs/planet';
 
@@ -21,7 +21,7 @@ export class SwapiService implements ISwapiService {
     return this.http.get<PlanetsResponse>(url);
   }
 
-  getAllPlanets() : Subject<Planet> {
+  getAllPlanets() : Observable<Planet> {
     let url = `${this.swapiUrl}/planets`;
     let planets = new Subject<Planet>();
 
@@ -55,7 +55,7 @@ export class SwapiService implements ISwapiService {
         }
       });
     });
-    return planets;
+    return planets.asObservable();
   }
 
   getFirstPageOfThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>{
@@ -66,7 +66,7 @@ export class SwapiService implements ISwapiService {
     return this.http.get<PagedResponse<T>>(url);
   }
 
-  getAllThings<T>(urlExtension: string) : Subject<T> {
+  getAllThings<T>(urlExtension: string) : Observable<T> {
     let url = `${this.swapiUrl}/${urlExtension}`;
     let things = new Subject<T>();
 
@@ -108,7 +108,7 @@ export class SwapiService implements ISwapiService {
         things.complete();
       });
     });
-    return things;
+    return things.asObservable();
   }
 
   getPlanet(id: number): Observable<Planet> {
@@ -118,6 +118,6 @@ export class SwapiService implements ISwapiService {
 
 export interface ISwapiService {
   getFirstPageOfThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>
-  getAllThings<T>(urlExtension: string) : Subject<T>;
+  getAllThings<T>(urlExtension: string) : Observable<T>;
   getPlanet(id: number): Observable<Planet>;
 }

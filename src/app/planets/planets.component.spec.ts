@@ -37,8 +37,20 @@ describe('PlanetsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    console.log(component.sortedPlanets);
   });
+
+  xit('should populate upon creation (w/o marbles)', async(() => {
+    fixture.detectChanges(); // ngOnInit()
+    fixture.whenStable().then(() => {
+      let planets = component.sortedPlanets; // CURRENTLY BROKEN - [] does not get populated
+      console.log('NO MARBLES 1', planets);
+      expect(planets.length).toEqual(2, 'the swapi service should yield two planets.');
+      if (planets.length == 2) {
+        expect(planets[0].name).toEqual('Mars');
+        expect(planets[0].name).toEqual('Venus');
+      }
+    });
+  }));
 
   it('should navigate to planet on selection of planet', () => {
     let planet = {

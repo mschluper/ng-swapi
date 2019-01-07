@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SwapiService } from '../services/swapi.service';
 import { Planet } from '../DTOs/planet';
 import { Router } from "@angular/router";
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-planets',
@@ -10,12 +9,12 @@ import { Subject } from 'rxjs';
   styleUrls: ['./planets.component.scss']
 })
 export class PlanetsComponent implements OnInit, OnDestroy {
-  sortedPlanets: Planet[] = [];
-  planetSubject: Subject<Planet>;
+  sortedPlanets: Planet[];
+  //planetSubject: Observable<Planet>;
 
   constructor(private swapiService : SwapiService,
         private router: Router) { 
-    console.log(swapiService);
+    //console.log(swapiService);
   }
 
   ngOnInit() {
@@ -23,15 +22,14 @@ export class PlanetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.planetSubject.unsubscribe();
     this.sortedPlanets.length = 0;
   }
 
   getAllPlanets() {
     let planetSort = (x: Planet, y: Planet) => x.name < y.name ? -1 : 1;
-    this.planetSubject = (this.swapiService).getAllThings<Planet>('planets')
-    
-    this.planetSubject.subscribe(planet => {
+    this.sortedPlanets = [];
+    (this.swapiService).getAllThings<Planet>('planets')
+    .subscribe(planet => {
       this.sortedPlanets.push(<Planet>planet);
       this.sortedPlanets.sort(planetSort);
     });
