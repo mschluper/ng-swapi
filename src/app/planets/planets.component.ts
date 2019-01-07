@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SwapiService } from '../services/swapi.service';
 import { Planet } from '../DTOs/planet';
 import { Router } from "@angular/router";
+import { Subject } from 'rxjs';
+import { filter, startWith, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-planets',
@@ -10,7 +12,7 @@ import { Router } from "@angular/router";
 })
 export class PlanetsComponent implements OnInit, OnDestroy {
   sortedPlanets: Planet[];
-  //planetSubject: Observable<Planet>;
+  private ngUnsubscribe = new Subject();
 
   constructor(private swapiService : SwapiService,
         private router: Router) { 
@@ -22,13 +24,18 @@ export class PlanetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sortedPlanets.length = 0;
+    https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription/41177163#41177163
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   getAllPlanets() {
     let planetSort = (x: Planet, y: Planet) => x.name < y.name ? -1 : 1;
     this.sortedPlanets = [];
     (this.swapiService).getAllThings<Planet>('planets')
+    .pipe(
+      takeUntil(this.ngUnsubscribe)
+    )
     .subscribe(planet => {
       this.sortedPlanets.push(<Planet>planet);
       this.sortedPlanets.sort(planetSort);

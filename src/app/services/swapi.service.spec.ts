@@ -57,7 +57,7 @@ describe('SwapiService', () => {
     });
 
     xit('should return expected planet (called once)', () => {
-      swapiService.getAllThings<Planet>('planets')
+      let observable = swapiService.getAllThings<Planet>('planets')
       .subscribe(
         planet => {
           expect(planet).toEqual(expectedPlanet, 'should return expected planet');
