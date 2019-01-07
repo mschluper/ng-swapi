@@ -32,12 +32,12 @@ export class PlanetsComponent implements OnInit, OnDestroy {
   getAllPlanets() {
     let planetSort = (x: Planet, y: Planet) => x.name < y.name ? -1 : 1;
     this.sortedPlanets = [];
-    (this.swapiService).getAllThings<Planet>('planets')
+    (this.swapiService).getAllThingsInChunks<Planet>('planets')
     .pipe(
       takeUntil(this.ngUnsubscribe)
     )
-    .subscribe(planet => {
-      this.sortedPlanets.push(<Planet>planet);
+    .subscribe(planets => {
+      this.sortedPlanets.splice(0,0,...planets);
       this.sortedPlanets.sort(planetSort);
     });
   }

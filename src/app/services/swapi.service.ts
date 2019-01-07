@@ -3,7 +3,7 @@ import { PlanetsResponse, PagedResponse } from '../DTOs/planetsResponse';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Planet } from '../DTOs/planet';
-import { HttpErrorHandler, HandleError } from './http-error-handler.service';
+//import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -11,11 +11,11 @@ import { catchError } from 'rxjs/operators';
 })
 export class SwapiService implements ISwapiService {
   swapiUrl = 'https://swapi.co/api';
-  private handleError: HandleError;
+  //private handleError: HandleError;
 
-  constructor(private http: HttpClient,
-    httpErrorHandler: HttpErrorHandler) {
-    this.handleError = httpErrorHandler.createHandleError('HeroesService');
+  constructor(private http: HttpClient) {
+    //httpErrorHandler: HttpErrorHandler) {
+    //this.handleError = httpErrorHandler.createHandleError('SwapiService');
   }
 
   getPlanets(page: number): Observable<PlanetsResponse> {
@@ -160,9 +160,9 @@ export class SwapiService implements ISwapiService {
 
   getPlanet(id: number): Observable<Planet> {
     return this.http.get<Planet>(`${this.swapiUrl}/planets/${id}`)
-    .pipe(
-      catchError(this.handleError('getPlanet', <Planet>{}))
-    );
+    // .pipe(
+    //   catchError(this.handleError('getPlanet', <Planet>{}))
+    // );
   }
 }
 

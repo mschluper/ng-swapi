@@ -59,8 +59,8 @@ describe('SwapiService', () => {
     it('should return expected planet (called once)', () => {
       swapiService.getAllThingsInChunks<Planet>('planets')
       .subscribe(
-        planet => {
-          expect(planet).toEqual(expectedPlanets, 'should return expected planets');
+        planets => {
+          expect(planets).toEqual(expectedPlanets, 'should return expected planets');
         },
         fail
       );
