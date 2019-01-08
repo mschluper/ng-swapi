@@ -3,7 +3,7 @@ import { PlanetsResponse, PagedResponse } from '../DTOs/planetsResponse';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Planet } from '../DTOs/planet';
-//import { HttpErrorHandler, HandleError } from './http-error-handler.service';
+import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -11,11 +11,11 @@ import { catchError } from 'rxjs/operators';
 })
 export class SwapiService implements ISwapiService {
   swapiUrl = 'https://swapi.co/api';
-  //private handleError: HandleError;
+  private handleError: HandleError;
 
-  constructor(private http: HttpClient) {
-    //httpErrorHandler: HttpErrorHandler) {
-    //this.handleError = httpErrorHandler.createHandleError('SwapiService');
+  constructor(private http: HttpClient,
+              httpErrorHandler: HttpErrorHandler) {
+    this.handleError = httpErrorHandler.createHandleError('SwapiService');
   }
 
   getPlanets(page: number): Observable<PlanetsResponse> {
@@ -109,7 +109,6 @@ export class SwapiService implements ISwapiService {
             things.next(p);
           })
         }
-        //throw Error;  // to do: error handling ... https://angular.io/guide/http#testing-for-errors
         things.complete();
       });
     });
@@ -146,11 +145,15 @@ export class SwapiService implements ISwapiService {
       }
 
       forkJoin(observables) // cf. Promise.all()
+      .pipe(
+        catchError(this.handleError('getAllThingsInChunks', []))
+      )
       .subscribe(responses => {
         for (var pageNumber = 0; pageNumber < pageCount - 2; pageNumber++) {
-          chunks.next(responses[pageNumber].results);
+          if (responses[pageNumber]) {
+            chunks.next(responses[pageNumber].results);
+          }
         }
-        //throw Error;  // to do: error handling ... https://angular.io/guide/http#testing-for-errors
         chunks.complete();
       });
     });
@@ -160,9 +163,10 @@ export class SwapiService implements ISwapiService {
 
   getPlanet(id: number): Observable<Planet> {
     return this.http.get<Planet>(`${this.swapiUrl}/planets/${id}`)
-    // .pipe(
-    //   catchError(this.handleError('getPlanet', <Planet>{}))
-    // );
+    .pipe(
+      // handle http errors
+      catchError(this.handleError('getPlanet', <Planet>{}))
+    );
   }
 }
 

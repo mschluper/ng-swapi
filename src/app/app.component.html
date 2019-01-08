@@ -15,8 +15,17 @@
       <div class="page-padded">
         <router-outlet></router-outlet>
       </div>
+
+      <div *ngIf="messageService.messages.length > 0" >
+        <mat-icon class="error" 
+                  matTooltip="See console for {{messageService.messages.length}} error mssage(s). ">
+          error
+        </mat-icon>
+      </div>
+
     </mat-sidenav-content>
   </mat-sidenav-container>
   
 </div>
+
 

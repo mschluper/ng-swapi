@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { MatSidenavModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatProgressSpinnerModule, MatCardModule } from '@angular/material';
+import { MatSidenavModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatProgressSpinnerModule, MatCardModule, MatTooltipModule } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 const modules = [
@@ -11,7 +11,8 @@ const modules = [
   MatIconModule,
   MatProgressSpinnerModule,
   MatSidenavModule,
-  MatTableModule
+  MatTableModule,
+  MatTooltipModule
 ]
 @NgModule({
   imports: modules,

@@ -12,6 +12,8 @@ import { PlanetsComponent } from './planets/planets.component';
 import { VehiclesComponent } from './vehicles/vehicles.component';
 import { PeopleComponent } from './people/people.component';
 import { PlanetDetailComponent } from './planet-detail/planet-detail.component';
+import { HttpErrorHandler } from './services/http-error-handler.service';
+import { MessageService } from './services/message.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,7 @@ import { PlanetDetailComponent } from './planet-detail/planet-detail.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [HttpErrorHandler, MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

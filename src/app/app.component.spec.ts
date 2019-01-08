@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { NgMaterialModule } from './ng-material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from './services/message.service';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -11,6 +12,9 @@ describe('AppComponent', () => {
         RouterTestingModule,
         NgMaterialModule,
         BrowserAnimationsModule
+      ],
+      providers: [
+        MessageService
       ],
       declarations: [
         AppComponent
