@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatSidenavModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatProgressSpinnerModule, MatCardModule, MatTooltipModule } from '@angular/material';
+//import { MatTableModule } from '@angular/material/table';
+import { MatSidenavModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatProgressSpinnerModule, MatCardModule, MatTooltipModule, MatTableModule} from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 const modules = [

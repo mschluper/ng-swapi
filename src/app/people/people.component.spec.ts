@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { SwapiService } from '../services/swapi.service';
 import { MockSwapiService } from '../mockServices/swapi.service.mock';
 import { RouterModule } from '@angular/router';
-//import { MatTableModule, MatProgressSpinner } from '@angular/material';
 import { NgMaterialModule } from '../ng-material'
 
 describe('PeopleComponent', () => {
@@ -14,7 +13,9 @@ describe('PeopleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, RouterModule, NgMaterialModule],
+      imports: [HttpClientModule,   // HttpClient needs it
+        RouterModule,               // routerLink needs it
+        NgMaterialModule],          // spinner needs it
       providers: [{
         provide: SwapiService,
         useClass: MockSwapiService
