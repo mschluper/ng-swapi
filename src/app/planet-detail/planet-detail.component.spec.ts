@@ -5,6 +5,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { SwapiService } from '../services/swapi.service';
 import { MockSwapiService } from '../mockServices/swapi.service.mock';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgMaterialModule } from '../ng-material';
+import { MessageService } from '../services/message.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('PlanetDetailComponent', () => {
   let component: PlanetDetailComponent;
@@ -12,21 +16,28 @@ describe('PlanetDetailComponent', () => {
 
   const fakeActivatedRoute = {
     snapshot: { 
-      //data: { ... } 
       paramMap: { get : (name) => 'SomeId' } 
     }
   } as ActivatedRoute;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [{
-        provide: SwapiService,
-        useClass: MockSwapiService
-      }, {
-        provide: ActivatedRoute, 
-        useValue: fakeActivatedRoute
-      }],
+      imports: [
+        HttpClientModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        NgMaterialModule
+      ],
+      providers: [
+        MessageService,
+        {
+          provide: SwapiService,
+          useClass: MockSwapiService
+        }, {
+          provide: ActivatedRoute, 
+          useValue: fakeActivatedRoute
+        }
+      ],
       declarations: [ PlanetDetailComponent ]
     })
     .compileComponents();

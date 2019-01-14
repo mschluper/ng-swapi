@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import { NgMaterialModule } from './ng-material'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MessageService } from './services/message.service';
+import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -17,7 +18,8 @@ describe('AppComponent', () => {
         MessageService
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        NavMenuComponent
       ],
     }).compileComponents();
   }));

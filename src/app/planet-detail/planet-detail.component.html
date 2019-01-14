@@ -1,21 +1,123 @@
-<div *ngIf="planet">
-<h1>{{planet.name}}</h1>
+<div *ngIf="planet && readOnly">
+  <div class="hflex-container">
+    <h1>{{planet.name}}</h1> &nbsp;
+    <button mat-icon-button class="action">
+      <mat-icon *ngIf="readOnly" class="action-button" (click)="enableEdit()">edit</mat-icon>
+    </button>
+  </div>
+  <table>
+    <tr>
+      <td>Climate</td>         <td>{{planet.climate}}</td>
+    </tr><tr>
+      <td>Days per Year</td>   <td>{{planet.orbital_period}}</td>
+    </tr><tr>
+      <td>Diameter</td>        <td>{{planet.diameter}}</td>
+    </tr><tr>
+      <td>Gravity</td>         <td>{{planet.gravity}}</td>
+    </tr><tr>
+      <td>Hours per Day</td>   <td>{{planet.rotation_period}}</td>
+    </tr><tr>
+      <td>Surface Water</td>   <td>{{planet.surface_water}}</td>
+    </tr><tr>
+      <td>Terrain</td>         <td>{{planet.terrain}}</td>
+    </tr>
+  </table>
+</div>
 
-<table>
-  <tr>
-    <td>Climate</td>         <td>{{planet.climate}}</td>
-  </tr><tr>
-    <td>Days per Year</td>   <td>{{planet.orbital_period}}</td>
-  </tr><tr>
-    <td>Diameter</td>        <td>{{planet.diameter}}</td>
-  </tr><tr>
-    <td>Gravity</td>         <td>{{planet.gravity}}</td>
-  </tr><tr>
-    <td>Hours per Day</td>   <td>{{planet.rotation_period}}</td>
-  </tr><tr>
-    <td>Surface Water</td>   <td>{{planet.surface_water}}</td>
-  </tr><tr>
-    <td>Terrain</td>         <td>{{planet.terrain}}</td>
-  </tr>
-</table>
+<div *ngIf="!readOnly" class="margin-right">
+  <form class="planet-form">
+    <div class="hflex-container full-width">
+      <mat-form-field class="full-width" required>
+        <input matInput type="text" placeholder="Name" 
+            [(ngModel)]="planet.name" name="name"
+        >
+
+        <!--             [formControl]="nameFormControl"
+        >
+        <mat-error *ngIf="nameFormControl.hasError('required')">
+          The name is <strong>required</strong>.
+        </mat-error> -->
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field style="flex: 0 0 40px">
+        <mat-select placeholder="Surface Water" [(ngModel)]="planet.surface_water" name="perc">
+          <mat-option *ngFor="let perc of percentages" [value]="perc.value">
+            {{perc.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <button mat-button class="action" 
+          style="flex: 0 0 80px"
+          (click)="saveThePlanet()"
+      >
+        Save
+      </button>
+    </div>
+
+    <div class="hflex-container full-width">
+      <mat-form-field>
+        <input matInput 
+          placeholder="Climate" 
+          [(ngModel)]="planet.climate"
+          name="climate"
+        >
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <input matInput 
+          placeholder="Terrain" 
+          [(ngModel)]="planet.terrain"
+          name="terrain"
+        >
+      </mat-form-field>
+      &nbsp;    
+      <mat-form-field >
+        <input matInput type="number" 
+          placeholder="Diameter" 
+          [(ngModel)]="planet.diameter"
+          name="diameter"
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="hflex-container full-width">
+      <mat-form-field>
+        <input matInput type="number"
+          placeholder="Orbital Period" 
+          [(ngModel)]="planet.orbital_period"
+          name="op"
+        >
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <input matInput type="number"
+          placeholder="Rotation Period" 
+          [(ngModel)]="planet.rotation_period"
+          name="rp"
+        >
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <input matInput type="number" 
+          placeholder="Gravity" 
+          [(ngModel)]="planet.gravity"
+          name="gravity"
+        >
+      </mat-form-field>
+    </div>
+
+    <!-- population: string;
+    diameter: string;
+    terrain: string;
+    orbital_period: string;   // number
+    rotation_period: string;  // number
+    //ResidentUrls: string[];
+    climate: string;
+    gravity: string;          // number
+    surface_water: string;    // percentage
+    url: string; -->
+  </form>
+
+  <!-- {{planet | json}} -->
 </div>

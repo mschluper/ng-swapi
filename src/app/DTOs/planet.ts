@@ -1,4 +1,5 @@
 export class Planet {
+    id: number;
     name: string;
     population: string;
     diameter: string;

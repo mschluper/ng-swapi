@@ -10,9 +10,17 @@
 .hflex-container {
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .vflex-container {
     display: flex;
     flex-direction: column;
+}
+
+button.action {
+    color:#FF5252;
+    outline: none;
+    font-weight: bold;
+    text-transform: uppercase;
 }

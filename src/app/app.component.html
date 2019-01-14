@@ -1,9 +1,12 @@
 <div class="page">
   <mat-sidenav-container class="page-container">
-    <mat-sidenav #sidenav mode="side" [(opened)]="opened" class="vflex-container" style="align-items: stretch">
-        <div><button mat-button class="nav-button" routerLink="/planets">Planets</button></div>
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" class="vflex-container narrow">
+      <app-nav-menu></app-nav-menu>
+
+
+        <!-- <div><button mat-button class="nav-button" routerLink="/planets">Planets</button></div>
         <div><button mat-button class="nav-button" routerLink="/vehicles">Vehicles</button></div>
-        <div><button mat-button class="nav-button" routerLink="/people">People</button></div>
+        <div><button mat-button class="nav-button" routerLink="/people">People</button></div> -->
     </mat-sidenav>
 
     <mat-sidenav-content class="hflex-container">
@@ -16,11 +19,14 @@
         <router-outlet></router-outlet>
       </div>
 
+      <!-- To Do: Make color change after display (and turn red again upon a new, un-read error -->
       <div *ngIf="messageService.messages.length > 0" >
-        <mat-icon class="error" 
-                  matTooltip="See console for {{messageService.messages.length}} error mssage(s). ">
-          error
-        </mat-icon>
+        <button mat-icon-button class="action" (click)="openBottomSheet()">
+          <mat-icon class="error" 
+                    matTooltip="Click to see {{messageService.messages.length}} error mssage(s). ">
+            error
+          </mat-icon>
+        </button>
       </div>
 
     </mat-sidenav-content>

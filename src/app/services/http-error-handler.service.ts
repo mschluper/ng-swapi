@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 
-import { MessageService } from './message.service';
+import { MessageService, MessageType } from './message.service';
 
 /** Type of the handleError function returned by HttpErrorHandler.createHandleError */
 export type HandleError =
@@ -36,7 +36,7 @@ export class HttpErrorHandler {
        `server returned code ${error.status} with body "${error.error}"`;
 
       // TODO: better job of transforming error for user consumption
-      this.messageService.add(`${serviceName}: ${operation} failed calling ${error.url}: ${message}`);
+      this.messageService.add(MessageType.error, `${serviceName}: ${operation} failed calling ${error.url}: ${message}`);
 
       // Let the app keep running by returning a safe result.
       return of( result );

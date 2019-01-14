@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Planet } from '../DTOs/planet';
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { catchError } from 'rxjs/operators';
+import { ContentObserver } from '@angular/cdk/observers';
 
 @Injectable({
   providedIn: 'root'
@@ -160,8 +161,31 @@ export class SwapiService implements ISwapiService {
     return chunks.asObservable();
   }
 
+  getAllPlanetsAtOnce() : Observable<Planet[]> {
+    return Observable.create(observer => {
+      let result = <Planet[]>[];
+      this.getAllThingsInChunks<Planet>('planets')
+      .subscribe(chunk => {
+        result = [...result, ...chunk];
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        // End of event stream
+        observer.next(result);
+      });
+    });
+  }
 
+  //testPlanet = {"name":"Mon Cala","rotation_period":"21","orbital_period":"398","diameter":"11030","climate":"temperate","gravity":"1","terrain":"oceans, reefs, islands","surface_water":"100","population":"27000000000","residents":["https://swapi.co/api/people/27/"],"films":[],"created":"2014-12-18T11:07:01.792000Z","edited":"2014-12-20T20:58:18.471000Z","url":"https://swapi.co/api/planets/31/"}
+  
   getPlanet(id: number): Observable<Planet> {
+    // let result = this.testPlanet;
+    // return Observable.create(observer => {
+    //   observer.next(result);
+    // });
+
     return this.http.get<Planet>(`${this.swapiUrl}/planets/${id}`)
     .pipe(
       // handle http errors
@@ -175,4 +199,5 @@ export interface ISwapiService {
   getAllThings<T>(urlExtension: string) : Observable<T>;
   getAllThingsInChunks<T>(urlExtension: string) : Observable<T[]>;
   getPlanet(id: number): Observable<Planet>;
+  //savePlanet(planet: Planet): void; // No API with POST endpoint available
 }

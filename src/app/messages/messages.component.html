@@ -1,0 +1,13 @@
+<!-- <mat-selection-list #messages>
+  <mat-list-option *ngFor="let message of messages">
+      {{message}}
+  </mat-list-option>
+</mat-selection-list>   NEEDS WORK  -->
+
+<!-- DRAFT -->
+
+<div *ngFor="let message of orderedMessages">
+  {{message.displayText}}
+</div>
+
+<!-- To Do: Support deletion of messages in this list. -->

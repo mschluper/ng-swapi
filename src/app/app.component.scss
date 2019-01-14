@@ -6,14 +6,6 @@
     right: 0;
 }
 
-// button.narrow {
-//     padding: 0px;
-// }
-
-// span.mat-button-wrapper {
-//     padding: 0px;
-// }
-
 div.no-padding {
     padding: 0px;
 }
@@ -22,10 +14,10 @@ div.no-padding {
     padding: 20px 10px;
 }
 
-button.nav-button {
-    outline:none;
-}
-
 .error {
     color: Red;
+}
+
+.narrow {
+    width: 100px;
 }
