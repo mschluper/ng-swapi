@@ -3,8 +3,8 @@ import { SwapiService } from '../services/swapi.service';
 import { ActivatedRoute } from '@angular/router';
 import { Planet } from '../DTOs/planet';
 import { FormControl, Validators } from '@angular/forms';
-import { CacheService } from '../services/cache.service';
 import { MessageService, MessageType } from '../services/message.service';
+import { CachedSwapiService } from '../services/cached-swapi.service';
 
 @Component({
   selector: 'app-planet-detail',
@@ -21,8 +21,7 @@ export class PlanetDetailComponent implements OnInit {
   planetId: number = -1;
 
   constructor(private route: ActivatedRoute,
-              private swapiService: SwapiService,
-              private cacheService: CacheService,
+              private swapiService: CachedSwapiService,
               private messageService: MessageService) {}
 
   ngOnInit(): void {
@@ -45,16 +44,10 @@ export class PlanetDetailComponent implements OnInit {
       this.planet.id = this.planetId--;
       return;
     }
-    let cachedPlanet = this.cacheService.getPlanetById(id);
-    if (cachedPlanet) {
-      this.planet = cachedPlanet;
-      return;
-    }
-    // It's an existing planet that's not cached
-    this.swapiService.getPlanet(id)
-      .subscribe(planet => {
-        this.planet = planet;
-      });
+    this.swapiService.getPlanetById(id)
+    .subscribe(p => {
+      this.planet = p;
+    })
   }
 
   saveThePlanet(): void {
@@ -63,27 +56,6 @@ export class PlanetDetailComponent implements OnInit {
       this.messageService.add(MessageType.error, 'A planet name is required.')
       return;
     }
-    if (!this.cacheService.isFilled()) {
-      this.swapiService.getAllPlanetsAtOnce()
-      .subscribe(planets => {
-        this.cacheService.persistPlanets(planets);
-        // planets are in cache now
-        this.persistPlanetIfNew(this.planet);
-      })
-    } else {
-      // planets are in cache
-      this.persistPlanetIfNew(this.planet);
-    }
-  }
-
-  // Precondition: planets are in cache
-  private persistPlanetIfNew(planet: Planet) {
-    let sameNamedPlanet = this.cacheService.getPlanet(planet.name);
-    if ((planet.id < 0 && sameNamedPlanet)                            // new planet w/ name that is already taken
-        || (planet.id > 0 && planet.id !== sameNamedPlanet.id)) {     // existing planet given name that is already taken
-      this.messageService.add(MessageType.error, `Planet ${planet.name} already exists. Either choose another name or update the existing planet. `);
-      return;
-    }
-    sameNamedPlanet.terrain = planet.terrain;
+    this.swapiService.savePlanet(this.planet);
   }
 }

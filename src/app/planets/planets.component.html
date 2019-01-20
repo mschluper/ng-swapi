@@ -1,13 +1,14 @@
 <h2>All Planets</h2>
 
-<table class="table table-striped" *ngIf="sortedPlanets && sortedPlanets.length > 0">
+<table matSort (matSortChange)="sortData($event, sortedPlanets)"
+    class="table table-striped" *ngIf="sortedPlanets && sortedPlanets.length > 0">
   <thead>
       <tr>
-          <th>Planet Name</th>
-          <th>Population</th>
-          <th>Diameter</th>
-          <th>Terrain</th>
-          <th>Length Of Year</th>
+          <th mat-sort-header="name">Planet Name</th>
+          <th mat-sort-header="population">Population</th>
+          <th mat-sort-header="diameter">Diameter</th>
+          <th mat-sort-header="terrain">Terrain</th>
+          <th mat-sort-header="orbital_period">Length Of Year</th>
       </tr>
   </thead>
   <tbody>

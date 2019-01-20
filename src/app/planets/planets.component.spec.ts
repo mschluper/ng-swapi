@@ -6,6 +6,7 @@ import { SwapiService } from '../services/swapi.service';
 import { MockSwapiService } from '../mockServices/swapi.service.mock';
 import { Router } from "@angular/router";
 import { Planet } from '../DTOs/planet';
+import { CachedSwapiService } from '../services/cached-swapi.service';
 
 describe('PlanetsComponent', () => {
   let component: PlanetsComponent;
@@ -17,7 +18,7 @@ describe('PlanetsComponent', () => {
       imports: [HttpClientModule],
       providers: [
         {
-          provide: SwapiService,
+          provide: CachedSwapiService,
           useClass: MockSwapiService
         }, 
         { 
@@ -39,15 +40,14 @@ describe('PlanetsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  xit('should populate upon creation (w/o marbles)', async(() => {
+  it('should populate upon creation (w/o marbles)', async(() => {
     fixture.detectChanges(); // ngOnInit()
     fixture.whenStable().then(() => {
-      let planets = component.sortedPlanets; // CURRENTLY BROKEN - [] does not get populated
-      console.log('NO MARBLES 1', planets);
+      let planets = component.sortedPlanets;
       expect(planets.length).toEqual(2, 'the swapi service should yield two planets.');
       if (planets.length == 2) {
         expect(planets[0].name).toEqual('Mars');
-        expect(planets[0].name).toEqual('Venus');
+        expect(planets[1].name).toEqual('Venus');
       }
     });
   }));

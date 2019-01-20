@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { PlanetsResponse, PagedResponse } from '../DTOs/planetsResponse';
-import { forkJoin, Observable, Subject } from 'rxjs';
+import { forkJoin, Observable, Subject, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Planet } from '../DTOs/planet';
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { catchError } from 'rxjs/operators';
 import { ContentObserver } from '@angular/cdk/observers';
+import { ISwapiService } from './iswapi.service';
 
 @Injectable({
   providedIn: 'root'
@@ -192,12 +193,12 @@ export class SwapiService implements ISwapiService {
       catchError(this.handleError('getPlanet', <Planet>{}))
     );
   }
-}
 
-export interface ISwapiService {
-  getFirstPageOfThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>;
-  getAllThings<T>(urlExtension: string) : Observable<T>;
-  getAllThingsInChunks<T>(urlExtension: string) : Observable<T[]>;
-  getPlanet(id: number): Observable<Planet>;
-  //savePlanet(planet: Planet): void; // No API with POST endpoint available
+  savePlanet(planet: Planet): Observable<number>
+  {
+    // return Observable.create(observer => {
+    //   observer.next(0); // at some point a real api will persist a planet and return a planet id
+    // });
+    return of(0);
+  }
 }

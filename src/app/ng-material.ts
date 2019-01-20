@@ -14,6 +14,7 @@ import {
   MatRippleModule,
   MatSelectModule,
   MatSidenavModule,
+  MatSortModule,
   MatTableModule,
   MatTooltipModule,
   MatTreeModule
@@ -33,6 +34,7 @@ const modules = [
   MatRippleModule,
   MatSelectModule,
   MatSidenavModule,
+  MatSortModule,
   MatTableModule,
   MatTooltipModule,
   MatTreeModule

@@ -2,18 +2,23 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NgMaterialModule } from '../ng-material';
 import { NavMenuComponent } from './nav-menu.component';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 describe('NavMenuComponent', () => {
   let component: NavMenuComponent;
   let fixture: ComponentFixture<NavMenuComponent>;
+  let navigateSpy: jasmine.Spy = jasmine.createSpy("navigate");
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterModule,       // routerLink needs it
-        NgMaterialModule    // spinner needs it
+        NgMaterialModule    // mat-tree needs it
       ],
+      providers: [ 
+      {
+        provide: Router, 
+        useClass: class { navigate = navigateSpy; } 
+      }],
       declarations: [ NavMenuComponent ]
     })
     .compileComponents();
@@ -25,7 +30,7 @@ describe('NavMenuComponent', () => {
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

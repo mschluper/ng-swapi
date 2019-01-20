@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Person } from '../DTOs/person';
 import { Planet } from '../DTOs/planet';
 import { Vehicle } from '../DTOs/vehicle';
-import { ISwapiService } from '../services/swapi.service';
+import { ISwapiService } from '../services/iswapi.service';
 
 
 @Injectable({
@@ -17,7 +17,7 @@ export class MockSwapiService implements ISwapiService {
     count: 1,
     next: '',
     previous: '',
-    results: [<Planet>{ name: 'Mars' }, <Planet>{ name: 'Venus'}]
+    results: [<Planet>{ name: 'Mars', url: 'prefix/123'}, <Planet>{ name: 'Venus', url: 'prefix/456'}]
   };
   mockPeopleResponse = {
     count: 1,
@@ -78,5 +78,9 @@ export class MockSwapiService implements ISwapiService {
       name: 'Neptune'
     }
     return of(planet);
+  }
+
+  savePlanet(planet: Planet): Observable<number> {
+    return of(42);
   }
 }

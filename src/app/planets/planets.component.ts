@@ -4,7 +4,8 @@ import { Planet } from '../DTOs/planet';
 import { Router } from "@angular/router";
 import { Subject } from 'rxjs';
 import { filter, startWith, takeUntil } from 'rxjs/operators';
-import { CacheService } from '../services/cache.service';
+import { CachedSwapiService } from '../services/cached-swapi.service';
+import { Sort } from '@angular/material';
 
 @Component({
   selector: 'app-planets',
@@ -16,17 +17,12 @@ export class PlanetsComponent implements OnInit, OnDestroy {
   sortedPlanets: Planet[];
   private ngUnsubscribe = new Subject();
 
-  constructor(private swapiService : SwapiService,
-        private router: Router,
-        private cacheService: CacheService) {
-  }
+  constructor(private swapiService : CachedSwapiService,
+        private router: Router) 
+  { }
 
   ngOnInit() {
-    if (this.cacheService.isFilled()) {
-      this.sortedPlanets = this.cacheService.planets.sort(this.planetSort);
-    } else {
-      this.getAllPlanets();
-    }
+    this.getAllPlanets();
   }
 
   ngOnDestroy() {
@@ -45,7 +41,6 @@ export class PlanetsComponent implements OnInit, OnDestroy {
       planets.forEach(planet => planet.id = this.getPlanetId(planet.url))
       this.sortedPlanets.splice(0,0,...planets);
       this.sortedPlanets.sort(this.planetSort);
-      this.cacheService.persistPlanets(this.sortedPlanets.slice());
     });
   }
 
@@ -64,4 +59,27 @@ export class PlanetsComponent implements OnInit, OnDestroy {
     let id = +parts[parts.length-2];
     return id;
   }
+
+  sortData(sort: Sort, planets: Planet[]) {
+    if (!sort.active || sort.direction === '') {
+      this.sortedPlanets = planets;
+      return;
+    }
+
+    this.sortedPlanets = planets.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'name': return compare(a.name, b.name, isAsc);
+        case 'population': return compare(a.population, b.population, isAsc);
+        case 'diameter': return compare(a.diameter, b.diameter, isAsc);
+        case 'terrain': return compare(a.terrain, b.terrain, isAsc);
+        case 'orbital_period': return compare(a.orbital_period, b.orbital_period, isAsc);
+        default: return 0;
+      }
+    });
+  }
+}
+
+function compare(a: number | string, b: number | string, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
