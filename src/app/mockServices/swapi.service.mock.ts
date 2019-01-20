@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PlanetsResponse, PagedResponse } from '../DTOs/planetsResponse';
 import { Observable, of, Subject } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Person } from '../DTOs/person';
 import { Planet } from '../DTOs/planet';
 import { Vehicle } from '../DTOs/vehicle';
@@ -32,7 +31,7 @@ export class MockSwapiService implements ISwapiService {
     results: [<Vehicle>{ name: 'Car' }, <Vehicle>{ name: 'Truck'}]
   };
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   private getResponse(urlExtension: string) {
     let response;
@@ -82,5 +81,10 @@ export class MockSwapiService implements ISwapiService {
 
   savePlanet(planet: Planet): Observable<number> {
     return of(42);
+  }
+
+  getAllPlanetsAtOnce() : Observable<Planet[]> {
+    let planets = <Planet[]>this.getResponse('planets').results;
+    return of(planets);
   }
 }

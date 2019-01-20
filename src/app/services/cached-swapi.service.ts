@@ -16,8 +16,7 @@ export class CachedSwapiService implements ICachedSwapiService {
     planets: <Planet[]>[]
   }
 
-  constructor(private http: HttpClient,
-              private messageService: MessageService,
+  constructor(private messageService: MessageService,
               private swapiService: SwapiService) {
   }
 

@@ -20,50 +20,50 @@ export class SwapiService implements ISwapiService {
     this.handleError = httpErrorHandler.createHandleError('SwapiService');
   }
 
-  getPlanets(page: number): Observable<PlanetsResponse> {
-    let url = `${this.swapiUrl}/planets`;
-    if (page > 1) {
-      url = `${url}/?page=${page}`;
-    }
-    return this.http.get<PlanetsResponse>(url);
-  }
+  // getPlanets(page: number): Observable<PlanetsResponse> {
+  //   let url = `${this.swapiUrl}/planets`;
+  //   if (page > 1) {
+  //     url = `${url}/?page=${page}`;
+  //   }
+  //   return this.http.get<PlanetsResponse>(url);
+  // }
 
-  getAllPlanets() : Observable<Planet> {
-    let url = `${this.swapiUrl}/planets`;
-    let planets = new Subject<Planet>();
+  // getAllPlanets() : Observable<Planet> {
+  //   let url = `${this.swapiUrl}/planets`;
+  //   let planets = new Subject<Planet>();
 
-    this.getPlanets(1)
-    .subscribe(response => {
-      response.results.forEach(p => {
-        planets.next(p);
-      });
-      let pageSize = response.results.length;
+  //   this.getPlanets(1)
+  //   .subscribe(response => {
+  //     response.results.forEach(p => {
+  //       planets.next(p);
+  //     });
+  //     let pageSize = response.results.length;
 
-      var pageCount = response.count / pageSize;
-      if (response.count % pageSize > 0)
-      {
-          pageCount += 1;
-      }
+  //     var pageCount = response.count / pageSize;
+  //     if (response.count % pageSize > 0)
+  //     {
+  //         pageCount += 1;
+  //     }
 
-      let observables: Observable<PlanetsResponse>[] = [];
-      for (var pageNumber = 2; pageNumber <= pageCount; pageNumber++) {
-        let pageUrl = `${url}/?page=${pageNumber}`;
-        let observable: Observable<PlanetsResponse> = this.http.get<PlanetsResponse>(pageUrl);
-        observables.push(observable);
-      }
+  //     let observables: Observable<PlanetsResponse>[] = [];
+  //     for (var pageNumber = 2; pageNumber <= pageCount; pageNumber++) {
+  //       let pageUrl = `${url}/?page=${pageNumber}`;
+  //       let observable: Observable<PlanetsResponse> = this.http.get<PlanetsResponse>(pageUrl);
+  //       observables.push(observable);
+  //     }
 
-      forkJoin(observables)
-      .subscribe(responses => {
-        for (var pageNumber = 0; pageNumber < pageCount - 2; pageNumber++) {
-          //console.log(`Page ${pageNumber}`, responses[pageNumber]);
-          responses[pageNumber].results.forEach(p => {
-            planets.next(p);
-          })
-        }
-      });
-    });
-    return planets.asObservable();
-  }
+  //     forkJoin(observables)
+  //     .subscribe(responses => {
+  //       for (var pageNumber = 0; pageNumber < pageCount - 2; pageNumber++) {
+  //         //console.log(`Page ${pageNumber}`, responses[pageNumber]);
+  //         responses[pageNumber].results.forEach(p => {
+  //           planets.next(p);
+  //         })
+  //       }
+  //     });
+  //   });
+  //   return planets.asObservable();
+  // }
 
   getFirstPageOfThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>{
     let url = `${this.swapiUrl}/${urlExtension}`;
