@@ -56,6 +56,9 @@ export class PlanetDetailComponent implements OnInit {
       this.messageService.add(MessageType.error, 'A planet name is required.')
       return;
     }
-    this.swapiService.savePlanet(this.planet);
+    this.swapiService.savePlanet(this.planet)
+    .subscribe(nr => {
+      console.log(`Thank God. Planet ${nr} has been saved.`);
+    })
   }
 }

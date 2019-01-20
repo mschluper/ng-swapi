@@ -66,19 +66,14 @@ export class CachedSwapiService implements ICachedSwapiService {
         observer.next(this.cache.planets);
       });
     } else {
-      let result = <Planet[]>[];
       return Observable.create(observer => {
-        this.getAllThingsInChunks<Planet>('planets')
-        .subscribe(chunk => {
-          result = [...result, ...chunk];
+        this.swapiService.getAllPlanetsAtOnce()
+        .subscribe(planets => {
+          this.cache.planets = planets;
+          observer.next(planets);
         },
         error => {
           console.log(error);
-        },
-        () => {
-          // End of event stream
-          this.cache.planets = result;
-          observer.next(result);
         });
       });
     }
