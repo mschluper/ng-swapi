@@ -20,6 +20,10 @@ export class CachedSwapiService implements ICachedSwapiService {
               private swapiService: SwapiService) {
   }
 
+  insertPlanetIntoCacheForTestingPurposes(planet: Planet) : void {
+    this.cache.planets.push(planet);
+  }
+
   getFirstPageOfThings<T>(urlExtension: string, page: number) : Observable<PagedResponse<T>>{
     if (urlExtension === 'planets' && this.cache.planets.length) {
       return Observable.create(observer => {
@@ -86,8 +90,9 @@ export class CachedSwapiService implements ICachedSwapiService {
       planet = this.cache.planets.find(p => p.id === id);
     }
     if (planet) {
+      var copy = {...planet};
       return Observable.create(observer => {
-        observer.next(planet);
+        observer.next(copy);
       });
     } else {
       return this.swapiService.getPlanet(id);
@@ -107,15 +112,19 @@ export class CachedSwapiService implements ICachedSwapiService {
         let sameNamedPlanet = this.cache.planets.find(p => p.name === planet.name);
         if ((planet.id < 0 && sameNamedPlanet)                            // new planet w/ name that is already taken
             || (planet.id > 0 && sameNamedPlanet && planet.id !== sameNamedPlanet.id)) {     // existing planet given name that is already taken
-          this.messageService.add(MessageType.error, `Planet ${planet.name} already exists. Either choose another name or update the existing planet. `);
+          let message = `Planet ${planet.name} already exists. Either choose another name or update the existing planet. `;
+          this.messageService.add(MessageType.error, message);
+          console.log('ERROR', message);
           return;
         }
         sameNamedPlanet = Object.assign({}, sameNamedPlanet, planet);
         //sameNamedPlanet.terrain = planet.terrain; etc
-        this.swapiService.savePlanet(planet)
-        .subscribe(nr => {
-          observer.next(nr);
-        })
+        let save = this.swapiService.savePlanet(planet);
+        if (save) {
+          save.subscribe(nr => {
+            observer.next(nr);
+          })
+        }
       })
     })
   }

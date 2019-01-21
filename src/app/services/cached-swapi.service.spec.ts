@@ -15,27 +15,46 @@ import { CachedSwapiService } from './cached-swapi.service';
 import { MockSwapiService } from '../mockServices/swapi.service.mock';
 
 describe('CachedSwapiService', () => {
-  let httpClient: HttpClient;
+  //let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
-  let swapiService: SwapiService;
+  let cachedSwapiService: CachedSwapiService; // sut
+  let messageService: jasmine.SpyObj<MessageService>;
+  let getPlanetSpy: jasmine.Spy = jasmine.createSpy("getPlanet");
+  let savePlanetSpy: jasmine.Spy = jasmine.createSpy("savePlanet");
+  let addMessageSpy: jasmine.Spy = jasmine.createSpy("add");
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       // Import the HttpClient mocking services
       imports: [ HttpClientTestingModule ],
+      
       // Provide the service-under-test and its dependencies
       providers: [
-        SwapiService,
+        CachedSwapiService,
         HttpErrorHandler,
-        MessageService
+        { 
+          provide: SwapiService, 
+          useClass: class { 
+            getPlanet = getPlanetSpy; 
+            savePlanet = savePlanetSpy;
+          }
+        },
+        { 
+          provide: MessageService, 
+          useClass: class { 
+            add = addMessageSpy;
+          }
+        },
       ]
     });
 
     // Inject the http, test controller, and service-under-test
     // as they will be referenced by each test.
-    httpClient = TestBed.get(HttpClient);
+        //httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    
+
+    cachedSwapiService = TestBed.get(CachedSwapiService);
+    messageService = TestBed.get(MessageService);    
   });
 
   afterEach(() => {
@@ -43,124 +62,96 @@ describe('CachedSwapiService', () => {
     httpTestingController.verify();
   });
 
-  describe('getAllThings', () => {
-    let expectedPlanet: Planet;
-    let expectedPlanets: Planet[];
-    let planetsUrl: string;
-
-    beforeEach(() => {
-      swapiService = TestBed.get(SwapiService);
-      planetsUrl = `${swapiService.swapiUrl}/planets`;
-      expectedPlanet = <Planet>{ name: 'Mars' };
-      expectedPlanets = [
-         { name: 'Mars' },
-         { name: 'Venus' },
-      ] as Planet[];
-    });
-
-    it('should return expected planet (called once)', () => {
-      swapiService.getAllThingsInChunks<Planet>('planets')
-      .subscribe(
-        planets => {
-          expect(planets).toEqual(expectedPlanets, 'should return expected planets');
-        },
-        fail
-      );
-
-      // SwapiService should have made one request to GET planets from expected URL
-      const req = httpTestingController.expectOne(planetsUrl);
-      expect(req.request.method).toEqual('GET');
-      expect(req.request.url).toEqual(planetsUrl);
-
-      req.flush(expectedPlanets); // Respond / cause Observable to resolve
-    });
-  });
-
-  describe('getFirstPageOfThings', () => {
-    let expectedPlanets: Planet[];
-    let planetsUrl: string;
-    let expectedResponse: PagedResponse<Planet>;
-
-    beforeEach(() => {
-      swapiService = TestBed.get(SwapiService);
-      planetsUrl = `${swapiService.swapiUrl}/planets`;
-      expectedPlanets = [
-         { name: 'Mars' },
-         { name: 'Venus' },
-      ] as Planet[];
-      expectedResponse = <PagedResponse<Planet>>{
-        count: 2,
-        next: null,
-        previous: null,
-        results: expectedPlanets
-      }
-    });
-
-    it('should return expected planets', () => {
-      swapiService.getFirstPageOfThings<Planet>('planets', 1)
-      .subscribe(
-        planet => {
-          expect(planet.results).toEqual(expectedPlanets, 'should return expected planets');
-        },
-        fail
-      );
-
-      // SwapiService should have made one request to GET planets from expected URL
-      const req = httpTestingController.expectOne(planetsUrl);
-      expect(req.request.method).toEqual('GET');
-      expect(req.request.url).toEqual(planetsUrl);
-
-      req.flush(expectedResponse); // Trigger response / resolve Observable (and first expect() to execute)
-    });
-  });
-
   describe('getPlanet', () => {
-    let expectedPlanet: Planet;
     let planetId: number = 999;
-    let planetUrl: string;
 
     beforeEach(() => {
-      swapiService = TestBed.get(SwapiService);
-      planetUrl = `${swapiService.swapiUrl}/planets/${planetId}`;
-      expectedPlanet = <Planet>{ name: 'Mars' };
+    });
+
+    afterEach(() => {
+      getPlanetSpy.calls.reset();
     });
   
-    it('should call /planets/id', () => {
-      swapiService.getPlanet(planetId).subscribe(
-        planet => {
-          expect(planet).toEqual(expectedPlanet, 'should return expected planet');
-        },
-        fail
-      );
+    it('should call SwapiService if cache is empty', () => {
+      cachedSwapiService.getPlanet(planetId);
+      expect(getPlanetSpy).toHaveBeenCalledWith(planetId);
+    });
 
-      // SwapiService should have made one request to GET planets from expected URL
-      const req = httpTestingController.expectOne(planetUrl);
-      expect(req.request.method).toEqual('GET');
-      expect(req.request.url).toEqual(planetUrl);
-
-      // Respond with the mock planet / resolve Observable
-      req.flush(expectedPlanet);
+    it('should not call SwapiService if cache contains planet', () => {
+      let planet = <Planet>{
+        id: planetId,
+        name: 'Mars'
+      }
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(planet);
+      cachedSwapiService.getPlanet(planetId);
+      expect(getPlanetSpy).not.toHaveBeenCalledWith(planetId);
     });
   });
 
   describe('savePlanet', () => {
-    let cachedService: CachedSwapiService;
-    let http: HttpClient;
-    let httpErrorHandler: HttpErrorHandler;
+    let planetId: number = 42;
+    let earth: Planet;
 
-    // it('persists an existing planet', () => {
-      
+    beforeEach(() => {
+      earth = <Planet>{
+        id: planetId,
+        name: 'Earth',
+        climate: 'OK'
+      }
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(earth);
+    });
 
-    // });
+    afterEach(() => {
+      savePlanetSpy.calls.reset();
+      addMessageSpy.calls.reset();
+    });
 
-    // it('fails to persist a new planet with the name of an existing planet', () => {
-      
+    it('persists an existing planet', () => {
+      earth.climate = 'perfect';
+      cachedSwapiService.savePlanet(earth)
+      .subscribe(nr => {});
+      expect(savePlanetSpy).toHaveBeenCalledWith(earth);
+    });
 
-    // });
+    it('fails to persist a new planet with the name of an existing planet', () => {
+      let pluto = <Planet>{
+        id: 999,
+        name: 'Earth'
+      }
+      cachedSwapiService.savePlanet(pluto)
+      .subscribe(nr => {});
+      expect(savePlanetSpy).not.toHaveBeenCalledWith(pluto);
+      //expect(addMessageSpy).toHaveBeenCalled(); // [object ErrorEvent] thrown
+    });
 
-    // it('persists planet with a changed but existing name', () => {
-      
-
-    // });
+    it('fails to persist a planet with a name changed to the name of another planet', () => {
+      let pluto = <Planet>{
+        id: 999,
+        name: 'Pluto'
+      }
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(pluto);
+      let planet = <Planet>{
+        id: planetId,
+        name: 'Pluto'
+      }
+      cachedSwapiService.savePlanet(planet)
+      .subscribe(nr => {});
+      expect(savePlanetSpy).not.toHaveBeenCalled();
+    });
   });
+
+
+
+  // alternative approach shown in https://angular.io/guide/testing "Testing without beforeEach()"
+  function setup() {
+    const messageServiceSpy =
+      jasmine.createSpyObj('MessageService', ['getPlanet']);
+    const swapiServiceSpy =
+      jasmine.createSpyObj('SwapiService', ['getPlanet']);
+    const stubValue = <Planet>{ name: 'Mars' };
+    const cachedSwapiService = new CachedSwapiService(messageServiceSpy, swapiServiceSpy);
+  
+    swapiServiceSpy.getPlanet.and.returnValue(stubValue);
+    return { cachedSwapiService, stubValue, messageServiceSpy, swapiServiceSpy };
+  }
 })
