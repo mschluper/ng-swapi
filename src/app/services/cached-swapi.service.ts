@@ -114,7 +114,7 @@ export class CachedSwapiService implements ICachedSwapiService {
             || (planet.id > 0 && sameNamedPlanet && planet.id !== sameNamedPlanet.id)) {     // existing planet given name that is already taken
           let message = `Planet ${planet.name} already exists. Either choose another name or update the existing planet. `;
           this.messageService.add(MessageType.error, message);
-          console.log('ERROR', message);
+          //console.log('ERROR', message);
           return;
         }
         sameNamedPlanet = Object.assign({}, sameNamedPlanet, planet);

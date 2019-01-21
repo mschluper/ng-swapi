@@ -111,6 +111,7 @@ describe('CachedSwapiService', () => {
       cachedSwapiService.savePlanet(earth)
       .subscribe(nr => {});
       expect(savePlanetSpy).toHaveBeenCalledWith(earth);
+      expect(addMessageSpy).not.toHaveBeenCalled();
     });
 
     it('fails to persist a new planet with the name of an existing planet', () => {
@@ -121,7 +122,7 @@ describe('CachedSwapiService', () => {
       cachedSwapiService.savePlanet(pluto)
       .subscribe(nr => {});
       expect(savePlanetSpy).not.toHaveBeenCalledWith(pluto);
-      //expect(addMessageSpy).toHaveBeenCalled(); // [object ErrorEvent] thrown
+      expect(addMessageSpy).toHaveBeenCalledWith(2, 'Planet Earth already exists. Either choose another name or update the existing planet. ');
     });
 
     it('fails to persist a planet with a name changed to the name of another planet', () => {
@@ -137,6 +138,7 @@ describe('CachedSwapiService', () => {
       cachedSwapiService.savePlanet(planet)
       .subscribe(nr => {});
       expect(savePlanetSpy).not.toHaveBeenCalled();
+      expect(addMessageSpy).toHaveBeenCalledWith(2, 'Planet Pluto already exists. Either choose another name or update the existing planet. ');
     });
   });
 
