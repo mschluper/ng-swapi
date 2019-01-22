@@ -52,13 +52,15 @@ export class CachedSwapiService implements ICachedSwapiService {
     } else {
       //return this.swapiService.getAllThingsInChunks<T>(urlExtension);
       return Observable.create(observer => {
-        this.swapiService.getAllThingsInChunks<T>(urlExtension)
-        .subscribe(ch => {
-          if (urlExtension === 'planets') {
-            this.cache.planets = [...this.cache.planets, ...<Planet[]><unknown>ch];
-          }
-          observer.next(ch);
-        });
+        let getAll = this.swapiService.getAllThingsInChunks<T>(urlExtension);
+        if (getAll) {
+          getAll.subscribe(ch => {
+            if (urlExtension === 'planets') {
+              this.cache.planets = [...this.cache.planets, ...<Planet[]><unknown>ch];
+            }
+            observer.next(ch);
+          });
+        }
       });
     }
   }
@@ -70,14 +72,16 @@ export class CachedSwapiService implements ICachedSwapiService {
       });
     } else {
       return Observable.create(observer => {
-        this.swapiService.getAllPlanetsAtOnce()
-        .subscribe(planets => {
-          this.cache.planets = planets;
-          observer.next(planets);
-        },
-        error => {
-          console.log(error);
-        });
+        let getAll = this.swapiService.getAllPlanetsAtOnce();
+        if (getAll) {
+          getAll.subscribe(planets => {
+            this.cache.planets = planets;
+            observer.next(planets);
+          },
+          error => {
+            console.log(error);
+          });
+        }
       });
     }
   }

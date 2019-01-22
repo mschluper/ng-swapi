@@ -23,6 +23,7 @@ describe('CachedSwapiService', () => {
   let savePlanetSpy: jasmine.Spy = jasmine.createSpy("savePlanet");
   let addMessageSpy: jasmine.Spy = jasmine.createSpy("add");
   let getAllPlanetsAtOnceSpy: jasmine.Spy = jasmine.createSpy("getAllPlanetsAtOnce");
+  let getAllThingsInChunksSpy: jasmine.Spy = jasmine.createSpy("getAllThingsInChunks");
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -39,6 +40,7 @@ describe('CachedSwapiService', () => {
             getPlanet = getPlanetSpy; 
             savePlanet = savePlanetSpy;
             getAllPlanetsAtOnce = getAllPlanetsAtOnceSpy;
+            getAllThingsInChunks = getAllThingsInChunksSpy;
           }
         },
         { 
@@ -64,8 +66,47 @@ describe('CachedSwapiService', () => {
     httpTestingController.verify();
   });
 
-  describe('getAllPlanetsAtOnce', () => {
+  describe('getAllThingsInChunks', () => {
 
+    afterEach(() => {
+      getAllThingsInChunksSpy.calls.reset();
+    });
+
+    it('should call SwapiService if cache is empty', () => {
+      cachedSwapiService.getAllThingsInChunks('planets')
+      .subscribe(planets => {});
+      expect(getAllThingsInChunksSpy).toHaveBeenCalled();
+    });
+
+    it('should not call SwapiService if cache is not empty', () => {
+      let planet = <Planet>{
+        id: 984,
+        name: 'Mars'
+      }
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(planet);
+      cachedSwapiService.getAllThingsInChunks('planets')
+      .subscribe(planets => {});
+      expect(getAllThingsInChunksSpy).not.toHaveBeenCalled();
+    });
+
+    it('should get the planet(s) from cache if cache is not empty', () => {
+      let mars = <Planet>{
+        id: 985,
+        name: 'Mars'
+      }
+      let planets;
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(mars);
+      cachedSwapiService.getAllThingsInChunks('planets')
+      .subscribe(plnts => {
+        planets = plnts;
+      });
+      expect(planets).toBeTruthy();
+      expect(planets.length).toEqual(1);
+      expect(planets[0]).toEqual(mars);
+    });
+  })
+
+  describe('getAllPlanetsAtOnce', () => {
     afterEach(() => {
       getAllPlanetsAtOnceSpy.calls.reset();
     });
@@ -78,7 +119,7 @@ describe('CachedSwapiService', () => {
 
     it('should not call SwapiService if cache is not empty', () => {
       let planet = <Planet>{
-        id: 987,
+        id: 986,
         name: 'Mars'
       }
       cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(planet);
