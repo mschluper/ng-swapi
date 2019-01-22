@@ -22,6 +22,7 @@ describe('CachedSwapiService', () => {
   let getPlanetSpy: jasmine.Spy = jasmine.createSpy("getPlanet");
   let savePlanetSpy: jasmine.Spy = jasmine.createSpy("savePlanet");
   let addMessageSpy: jasmine.Spy = jasmine.createSpy("add");
+  let getAllPlanetsAtOnceSpy: jasmine.Spy = jasmine.createSpy("getAllPlanetsAtOnce");
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,6 +38,7 @@ describe('CachedSwapiService', () => {
           useClass: class { 
             getPlanet = getPlanetSpy; 
             savePlanet = savePlanetSpy;
+            getAllPlanetsAtOnce = getAllPlanetsAtOnceSpy;
           }
         },
         { 
@@ -61,6 +63,46 @@ describe('CachedSwapiService', () => {
     // After every test, assert that there are no more pending requests.
     httpTestingController.verify();
   });
+
+  describe('getAllPlanetsAtOnce', () => {
+
+    afterEach(() => {
+      getAllPlanetsAtOnceSpy.calls.reset();
+    });
+
+    it('should call SwapiService if cache is empty', () => {
+      cachedSwapiService.getAllPlanetsAtOnce()
+      .subscribe(planets => {});
+      expect(getAllPlanetsAtOnceSpy).toHaveBeenCalled();
+    });
+
+    it('should not call SwapiService if cache is not empty', () => {
+      let planet = <Planet>{
+        id: 987,
+        name: 'Mars'
+      }
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(planet);
+      cachedSwapiService.getAllPlanetsAtOnce()
+      .subscribe(planets => {});
+      expect(getAllPlanetsAtOnceSpy).not.toHaveBeenCalled();
+    });
+
+    it('should get the planet(s) from cache if cache is not empty', () => {
+      let mars = <Planet>{
+        id: 987,
+        name: 'Mars'
+      }
+      let planets;
+      cachedSwapiService.insertPlanetIntoCacheForTestingPurposes(mars);
+      cachedSwapiService.getAllPlanetsAtOnce()
+      .subscribe(plnts => {
+        planets = plnts;
+      });
+      expect(planets).toBeTruthy();
+      expect(planets.length).toEqual(1);
+      expect(planets[0]).toEqual(mars);
+    });
+  })
 
   describe('getPlanet', () => {
     let planetId: number = 999;
